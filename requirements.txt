@@ -1,0 +1,6 @@
+Flask
+flask-cors
+googlesearch-python
+requests
+beautifulsoup4
+gunicorn
