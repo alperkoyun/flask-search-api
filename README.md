@@ -11,11 +11,7 @@ Render **Free planı** için optimize edilmiştir. 🚀
 - 🔹 **meta=0** → Hızlı mod, sadece URL & domain döner  
 - 🔹 **Desktop / Mobile** cihaz desteği  
 - 🔹 **CORS açık** → Tüm frontend uygulamalarıyla uyumlu  
-- 🔹 Render **free planı** için optimizasyonlar:  
-  - Varsayılan hızlı mod (`meta=0`)  
-  - Maksimum **15 sonuç** döndürür  
-  - **3 saniye timeout** → Render 90s limitine uygun  
-  - **2 worker + 4 thread** → Daha az RAM ve CPU kullanır  
+
 
 ---
 
