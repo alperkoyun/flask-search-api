@@ -1,7 +1,7 @@
 # 🔍 Google SERP & SEO Sıralama API
 
 Bu API, **Google arama sonuçlarını (SERP)** çekmek için geliştirilmiş bir **Flask tabanlı web servisi**dir.  
-Verilen parametreler ile Google üzerinde arama yapar ve ilk **10 sonucu JSON formatında döndürür**.  
+Verilen parametreler ile Google üzerinde arama yapar ve ilk **20 sonucu JSON formatında döndürür**.  
 
 > 📌 API, SEO uzmanları, yazılım geliştiriciler ve dijital pazarlamacılar için uygundur.  
 > Kendi arayüzünüzü geliştirip API’yi kolayca entegre edebilirsiniz.
@@ -40,7 +40,7 @@ https://flask-search-api-3fox.onrender.com
 ## 🎯 API’nin Özellikleri
 
 - 🔎 Google üzerinde belirtilen anahtar kelime için arama yapar  
-- 📌 İlk **40 sonucu** JSON formatında döndürür  
+- 📌 İlk **20 sonucu** JSON formatında döndürür  
 - 🏷️ Her sonucun **sıra numarası**, **URL**, **domain**, **başlık** ve **meta açıklamasını** verir  
 - ✅ Belirtilen `site_filter` URL’si sonucu içeriyorsa `hedef_site_mi: true` döner  
 - ❌ **Hedef site sırasını veya özet rapor vermez**  
@@ -141,7 +141,7 @@ curl "https://flask-search-api-3fox.onrender.com/search?query=openai&dil=tr&bolg
 
 
 📊 Kullanım Senaryoları
-🔹 Google Arama Sonuçları Çekme → İlk 40 sonucu JSON formatında al
+🔹 Google Arama Sonuçları Çekme → İlk 20 sonucu JSON formatında al
 
 🔹 Site Varlık Kontrolü → Belirli bir domain sonuçlar arasında var mı?
 
