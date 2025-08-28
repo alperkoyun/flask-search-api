@@ -45,7 +45,7 @@ def google_search_to_json(query, dil=None, bolge=None, device=None, site_filter=
 
     # Google araması parametrelerini ayarla
     search_params = {
-        'num_results': 10,
+        'num_results': 40,
         'lang': dil,
         'region': bolge,
         'unique': True
