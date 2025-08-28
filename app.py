@@ -74,7 +74,7 @@ def google_search_to_json(query, dil="tr", bolge="tr", device=None, site_filter=
 
     # googlesearch-python parametreleri
     search_params = {
-        "num_results": 10,
+        "num_results": 20,
         "lang": dil or "tr",
         
     }
