@@ -74,9 +74,9 @@ def google_search_to_json(query, dil="tr", bolge="tr", device=None, site_filter=
 
     # googlesearch-python parametreleri
     search_params = {
-        "num": 10,
+        "num_results": 10,
         "lang": dil or "tr",
-        # "region": bolge  # googlesearch-python çoğu sürümde region'ı desteklemiyor; dil ile sınırlı kalıyoruz
+        
     }
 
     for i, url in enumerate(search(query, **search_params), start=1):
