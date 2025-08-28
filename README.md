@@ -12,7 +12,6 @@ Bu proje, **Flask** tabanlı bir API olup, **Google üzerinden arama** yaparak s
 - JSON çıktı: `sira`, `url`, `domain`, `hedef_site_mi`
 - **20 sonuç** döndürür
 - `device` desteği: `desktop`, `mobile`, `tablet`
-- CORS açık
 
 ---
 
