@@ -6,6 +6,7 @@ from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
+from concurrent.futures import ThreadPoolExecutor, as_completed  
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -30,7 +31,7 @@ def make_session():
         allowed_methods=("GET", "HEAD"),
         raise_on_status=False,
     )
-    adapter = HTTPAdapter(max_retries=retry, pool_connections=20, pool_maxsize=20)
+    adapter = HTTPAdapter(max_retries=retry, pool_connections=30, pool_maxsize=30)
     sess.mount("http://", adapter)
     sess.mount("https://", adapter)
     return sess
@@ -40,16 +41,17 @@ SESSION = make_session()
 def get_page_details(url: str, user_agent: str):
     """
     Sayfa başlık ve meta description'ı döndürür.
-    Zorunlu olarak HIZLI davranır: kısa connect/read timeout ve tüm hataları yutar.
+    Hızlı ama güvenli: kısa connect/read timeout, hataları yutar.
     """
     headers = {"User-Agent": user_agent, "Accept": "text/html,application/xhtml+xml"}
-    # connect timeout 2s, read timeout 3s -> toplam en çok ~5s/istek
-    TIMEOUT = (2, 3)
+    TIMEOUT = (3, 5)  # connect=3s, read=5s → toplam en fazla ~8s/istek
     try:
         resp = SESSION.get(url, timeout=TIMEOUT, headers=headers, allow_redirects=True)
-        # İçerik çok büyükse gereksiz bellek harcamayalım
-        if int(resp.headers.get("Content-Length", "0") or 0) > 2_000_000:
+
+        # İçerik çok büyükse gereksiz bellek harcama
+        if int(resp.headers.get("Content-Length", "0") or 0) > 3_000_000:
             return "Başlık alınamadı", "Açıklama alınamadı"
+
         html = resp.text
         soup = BeautifulSoup(html, "html.parser")
 
@@ -59,6 +61,7 @@ def get_page_details(url: str, user_agent: str):
             desc.get("content", "").strip() if desc and desc.get("content") else "Açıklama bulunamadı"
         )
         return title, description
+
     except requests.exceptions.Timeout:
         return "Zaman aşımı", "Açıklama alınamadı"
     except Exception:
@@ -66,36 +69,58 @@ def get_page_details(url: str, user_agent: str):
 
 def google_search_to_json(query, dil="tr", bolge="tr", device=None, site_filter=None, meta=True):
     """
-    Google araması yapar, ilk 10 sonucu döndürür.
-    meta=True ise sayfaya gidip başlık/description çekmeye çalışır; False ise sadece URL/domain döner.
+    Google araması yapar, ilk 20 sonucu döndürür.
+    meta=True → başlık/description'ı paralel olarak çeker.
+    meta=False → hızlı mod, sadece URL/domain döner.
     """
     results = []
     user_agent = USER_AGENT_MOBILE if device == "mobile" else USER_AGENT_DESKTOP
 
-    # googlesearch-python parametreleri
     search_params = {
         "num_results": 20,
         "lang": dil or "tr",
-        
     }
 
-    for i, url in enumerate(search(query, **search_params), start=1):
-        domain = urlparse(url).netloc
-        if meta:
-            title, description = get_page_details(url, user_agent)
-        else:
-            title, description = "Başlık alınmadı (meta=0)", "Açıklama alınmadı (meta=0)"
+    urls = list(search(query, **search_params))
 
-        result = {
-            "sira": i,
-            "url": url,
-            "domain": domain,
-            "baslik": title,
-            "aciklama": description,
-            "hedef_site_mi": (site_filter in url) if site_filter else False,
-        }
-        results.append(result)
+    # Hızlı mod: başlık ve açıklama çekilmez
+    if not meta:
+        for i, url in enumerate(urls, start=1):
+            domain = urlparse(url).netloc
+            results.append({
+                "sira": i,
+                "url": url,
+                "domain": domain,
+                "baslik": "Başlık alınmadı (meta=0)",
+                "aciklama": "Açıklama alınmadı (meta=0)",
+                "hedef_site_mi": (site_filter in url) if site_filter else False,
+            })
+        return results
 
+    # Yavaş mod: başlık/açıklamaları paralel çek
+    with ThreadPoolExecutor(max_workers=10) as executor:
+        future_to_url = {executor.submit(get_page_details, url, user_agent): url for url in urls}
+        i = 1
+        for future in as_completed(future_to_url):
+            url = future_to_url[future]
+            domain = urlparse(url).netloc
+            try:
+                title, description = future.result()
+            except Exception:
+                title, description = "Başlık alınamadı", "Açıklama alınamadı"
+
+            results.append({
+                "sira": i,
+                "url": url,
+                "domain": domain,
+                "baslik": title,
+                "aciklama": description,
+                "hedef_site_mi": (site_filter in url) if site_filter else False,
+            })
+            i += 1
+
+    # Sıralamayı koru
+    results.sort(key=lambda x: x["sira"])
     return results
 
 @app.route("/search", methods=["GET"])
@@ -105,16 +130,20 @@ def search_api():
     bolge = request.args.get("bolge")
     device = request.args.get("device", "desktop")
     site_filter = request.args.get("site_filter")
-    # meta: "1" (varsayılan) → başlık/desc çekmeye çalış; "0" → hızlı mod (URL/domain)
-    meta_flag = request.args.get("meta", "1")  # "1" / "0"
+    meta_flag = request.args.get("meta", "1")  # 1 = Başlık/Açıklama al, 0 = hızlı mod
     meta = meta_flag != "0"
 
-    # Tüm parametreler sizde zorunlu; eksikse 400 dönelim.
+    # Zorunlu parametreler kontrolü
     if not all([query, dil, bolge, device, site_filter]):
         return jsonify({"error": "query, dil, bolge, device, site_filter zorunludur"}), 400
 
     results = google_search_to_json(
-        query=query, dil=dil, bolge=bolge, device=device, site_filter=site_filter, meta=meta
+        query=query,
+        dil=dil,
+        bolge=bolge,
+        device=device,
+        site_filter=site_filter,
+        meta=meta
     )
 
     if not results:
@@ -122,5 +151,4 @@ def search_api():
     return jsonify(results)
 
 if __name__ == "__main__":
-    # Render için 0.0.0.0/5000
     app.run(host="0.0.0.0", port=5000)

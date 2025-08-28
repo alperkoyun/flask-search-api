@@ -7,7 +7,7 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f9f9f9;
+      background: #f4f6f9;
       color: #222;
       margin: 0;
       padding: 20px;
@@ -77,6 +77,10 @@
       max-height: 400px;
       overflow-y: auto;
     }
+    .optional {
+      color: #888;
+      font-size: 13px;
+    }
   </style>
 </head>
 <body>
@@ -91,43 +95,59 @@
     <p><b>Yanıt Tipi:</b> JSON</p>
     <p><b>CORS:</b> ✔ Destekleniyor</p>
 
-    <h2>📌 Parametreler (Tümü Zorunlu)</h2>
+    <h2>📌 Parametreler</h2>
     <table>
       <tr>
         <th>Parametre</th>
         <th>Açıklama</th>
         <th>Örnek Değer</th>
+        <th>Zorunlu</th>
       </tr>
       <tr>
         <td>query</td>
         <td>Aranacak kelime veya cümle</td>
         <td>openai</td>
+        <td>✔</td>
       </tr>
       <tr>
         <td>dil</td>
         <td>Arama dili</td>
         <td>tr</td>
+        <td>✔</td>
       </tr>
       <tr>
         <td>bolge</td>
         <td>Arama bölgesi</td>
         <td>tr</td>
+        <td>✔</td>
       </tr>
       <tr>
         <td>device</td>
         <td>Cihaz türü: <code>desktop</code> veya <code>mobile</code></td>
         <td>desktop</td>
+        <td>✔</td>
       </tr>
       <tr>
         <td>site_filter</td>
         <td>Belirli bir domain ile filtreleme</td>
         <td>openai.com</td>
+        <td>✔</td>
+      </tr>
+      <tr>
+        <td>meta</td>
+        <td>
+          Sayfa başlığı ve açıklamasını çekme: <br>
+          <b>1</b> = Başlık & açıklama alınır <br>
+          <b>0</b> = Hızlı mod (sadece URL/domain döner)
+        </td>
+        <td>1</td>
+        <td class="optional">Opsiyonel</td>
       </tr>
     </table>
 
     <h2>⚡ Örnek Sorgu</h2>
     <pre>
-GET /search?query=openai&dil=tr&bolge=tr&device=desktop&site_filter=openai.com
+GET /search?query=openai&dil=tr&bolge=tr&device=desktop&site_filter=openai.com&meta=1
     </pre>
 
     <h2>✅ Örnek Yanıt</h2>
@@ -165,6 +185,12 @@ GET /search?query=openai&dil=tr&bolge=tr&device=desktop&site_filter=openai.com
       <label>Site Filtresi (site_filter) *</label>
       <input id="site_filter" type="text" placeholder="örn: openai.com" required />
 
+      <label>Meta *</label>
+      <select id="meta" required>
+        <option value="1" selected>Başlık & Açıklama Al (Yavaş)</option>
+        <option value="0">Hızlı Mod (Başlık & Açıklama Yok)</option>
+      </select>
+
       <button onclick="testAPI()">API'yi Test Et</button>
     </form>
 
@@ -178,17 +204,22 @@ GET /search?query=openai&dil=tr&bolge=tr&device=desktop&site_filter=openai.com
       const bolge = document.getElementById("bolge").value;
       const device = document.getElementById("device").value;
       const siteFilter = document.getElementById("site_filter").value;
+      const meta = document.getElementById("meta").value;
 
       if (!query || !dil || !bolge || !device || !siteFilter) {
-        alert("Lütfen tüm alanları doldurun!");
+        alert("Lütfen tüm zorunlu alanları doldurun!");
         return;
       }
 
-      let url = `https://flask-search-api-3fox.onrender.com/search?query=${encodeURIComponent(query)}&dil=${encodeURIComponent(dil)}&bolge=${encodeURIComponent(bolge)}&device=${encodeURIComponent(device)}&site_filter=${encodeURIComponent(siteFilter)}`;
+      let url = `https://flask-search-api-3fox.onrender.com/search?query=${encodeURIComponent(query)}&dil=${encodeURIComponent(dil)}&bolge=${encodeURIComponent(bolge)}&device=${encodeURIComponent(device)}&site_filter=${encodeURIComponent(siteFilter)}&meta=${encodeURIComponent(meta)}`;
 
-      const response = await fetch(url);
-      const data = await response.json();
-      document.getElementById("result").innerText = JSON.stringify(data, null, 2);
+      try {
+        const response = await fetch(url);
+        const data = await response.json();
+        document.getElementById("result").innerText = JSON.stringify(data, null, 2);
+      } catch (err) {
+        document.getElementById("result").innerText = "❌ API isteği başarısız: " + err;
+      }
     }
   </script>
 </body>
