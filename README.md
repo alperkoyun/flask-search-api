@@ -1,79 +1,55 @@
-# 🔍 Flask Google Search API  
-Bu proje, **Flask** tabanlı bir API olup, **Google üzerinden arama** yaparak sonuçları **JSON** formatında döndürür.  
-**meta=1** (yavaş mod) ile başlık & açıklama bilgileri çekilir, **meta=0** (hızlı mod) ile sadece URL ve domain döner.  
-Render **Free planı** için optimize edilmiştir. 🚀  
+# 🔍 Flask Google Search API
+
+Bu proje, **Flask** tabanlı bir API olup, **Google üzerinden arama** yaparak sonuçları **JSON** formatında döndürür. Başlık/açıklama çekilmez; sadece `url`, `domain` ve `hedef_site_mi` alanları döner. Uygulama Railway üzerinde barındırılmaktadır.
+
+- Canlı URL: **https://web-production-27b2c.up.railway.app**
+- Geliştirici: **@alperkoyun**
 
 ---
 
-## 📌 Özellikler  
-- 🔹 **Google Search API** (googlesearch-python)  
-- 🔹 **meta=1** → Başlık & açıklamalar paralel olarak çekilir  
-- 🔹 **meta=0** → Hızlı mod, sadece URL & domain döner  
-- 🔹 **Desktop / Mobile** cihaz desteği  
-- 🔹 **CORS açık** → Tüm frontend uygulamalarıyla uyumlu  
-
+## 📌 Özellikler
+- Google araması (googlesearch-python)
+- JSON çıktı: `sira`, `url`, `domain`, `hedef_site_mi`
+- **20 sonuç** döndürür
+- `device` desteği: `desktop`, `mobile`, `tablet`
+- CORS açık
 
 ---
 
-## 🛠️ Kurulum  
+## 🛠️ Kurulum (Yerel)
 
-### 1️⃣ Depoyu Klonla  
 ```bash
 git clone https://github.com/alperkoyun/flask-google-search-api.git
 cd flask-google-search-api
-```
-
-2️⃣ Sanal Ortam Oluştur
-```bash
 python3 -m venv venv
 source venv/bin/activate   # Windows: venv\Scripts\activate
-```
-
-3️⃣ Bağımlılıkları Kur
-```bash
 pip install -r requirements.txt
-```
-
-4️⃣ Lokal Sunucuyu Başlat
-```bash
 python app.py
-
-Sunucu çalıştığında:
-
-http://127.0.0.1:5000
 ```
 
-⚡ Örnek Sorgular
-```bash
-1️⃣ Hızlı Mod (meta=0) — Varsayılan
-curl "http://127.0.0.1:5000/search?query=openai&dil=tr&bolge=tr&device=desktop&site_filter=openai.com&meta=0"
 
-2️⃣ Yavaş Mod (meta=1) — Başlık & Açıklama ile
-curl "http://127.0.0.1:5000/search?query=openai&dil=tr&bolge=tr&device=desktop&site_filter=openai.com&meta=1"
+
+⚡ Örnek İstekler
+```bash
+Desktop:
+
+curl "https://web-production-27b2c.up.railway.app/search?query=openai&dil=tr&bolge=tr&device=desktop&site_filter=openai.com"
+
+
+Mobile:
+
+curl "https://web-production-27b2c.up.railway.app/search?query=openai&dil=tr&bolge=tr&device=mobile&site_filter=openai.com"
+
+
+Tablet:
+
+curl "https://web-production-27b2c.up.railway.app/search?query=openai&dil=tr&bolge=tr&device=tablet&site_filter=openai.com"
 
 🧪 Örnek Yanıt
 [
-  {
-    "sira": 1,
-    "url": "https://openai.com/",
-    "domain": "openai.com",
-    "baslik": "OpenAI",
-    "aciklama": "OpenAI, yapay zeka araştırmaları yapan bir şirkettir.",
-    "hedef_site_mi": true
-  },
-  {
-    "sira": 2,
-    "url": "https://platform.openai.com/",
-    "domain": "platform.openai.com",
-    "baslik": "OpenAI API",
-    "aciklama": "OpenAI API, GPT modellerine kolay erişim sağlar.",
-    "hedef_site_mi": true
-  }
+  { "sira": 1, "url": "https://openai.com/", "domain": "openai.com", "hedef_site_mi": true },
+  { "sira": 2, "url": "https://platform.openai.com/", "domain": "platform.openai.com", "hedef_site_mi": true }
+  // ... toplam 20 sonuç
 ]
-```
 
-
-⚡ Örnek Online Sorgu
-```bash
-https://flask-search-api-3fox.onrender.com/search?query=openai&dil=tr&bolge=tr&device=desktop&site_filter=openai.com
 ```

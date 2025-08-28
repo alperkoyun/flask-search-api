@@ -1,220 +1,92 @@
+html
 <!DOCTYPE html>
 <html lang="tr">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Flask Google Search API Dokümantasyonu</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #f9f9f9;
-      color: #222;
-      margin: 0;
-      padding: 20px;
-    }
-    .container {
-      max-width: 950px;
-      margin: 0 auto;
-      background: #fff;
-      padding: 25px;
-      border-radius: 8px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-    }
-    h1 {
-      color: #007bff;
-      margin-bottom: 10px;
-    }
-    h2 {
-      color: #333;
-      margin-top: 25px;
-    }
-    pre {
-      background: #272822;
-      color: #f8f8f2;
-      padding: 12px;
-      border-radius: 5px;
-      overflow-x: auto;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-    }
-    th, td {
-      border: 1px solid #ddd;
-      padding: 10px;
-      text-align: left;
-    }
-    th {
-      background: #007bff;
-      color: white;
-    }
-    input, select, button {
-      padding: 8px;
-      margin-top: 5px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 14px;
-      width: 100%;
-    }
-    button {
-      background: #007bff;
-      color: #fff;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    button:hover {
-      background: #0056b3;
-    }
-    #result {
-      margin-top: 20px;
-      white-space: pre-wrap;
-      background: #f7f7f7;
-      padding: 10px;
-      border-radius: 5px;
-      border: 1px solid #ddd;
-      font-family: monospace;
-      max-height: 400px;
-      overflow-y: auto;
-    }
-    .error {
-      color: red;
-      font-weight: bold;
-    }
+    body{font-family:Arial, sans-serif;background:#f9f9f9;margin:0;padding:20px;color:#222}
+    .container{max-width:900px;margin:0 auto;background:#fff;padding:25px;border-radius:8px;box-shadow:0 0 15px rgba(0,0,0,.1)}
+    h1{color:#007bff}
+    table{width:100%;border-collapse:collapse;margin:15px 0}
+    th,td{border:1px solid #ddd;padding:10px;text-align:left}
+    th{background:#007bff;color:#fff}
+    input,select,button{padding:8px;margin:5px 0;width:100%;border:1px solid #ccc;border-radius:4px}
+    button{background:#007bff;color:#fff;cursor:pointer}
+    button:hover{background:#0056b3}
+    #result{margin-top:20px;background:#f7f7f7;padding:10px;border:1px solid #ddd;border-radius:5px;font-family:monospace;white-space:pre-wrap}
+    .muted{color:#666;font-size:13px}
   </style>
 </head>
 <body>
   <div class="container">
     <h1>🔍 Flask Google Search API</h1>
-    <p>Bu API, <b>googlesearch-python</b> kütüphanesini kullanarak Google araması yapar ve sonuçları JSON formatında döndürür.</p>
+    <p>Bu API Google araması yapar ve sonuçları JSON döndürür. <b>Başlık/Açıklama çekilmez</b>, yalnızca <code>url</code>, <code>domain</code>, <code>hedef_site_mi</code> alanları döner.</p>
 
-    <h2>🌍 API Bilgileri</h2>
-    <p><b>Base URL:</b> <code id="base-url">https://flask-search-api-3fox.onrender.com</code></p>
-    <p><b>Endpoint:</b> <code>/search</code></p>
-    <p><b>Yöntem:</b> GET</p>
-    <p><b>Yanıt Tipi:</b> JSON</p>
-    <p><b>CORS:</b> ✔ Destekleniyor</p>
+    <h2>🌍 Servis Bilgisi</h2>
+    <p><b>Base URL:</b> <code id="base-url">https://web-production-27b2c.up.railway.app</code></p>
+    <p class="muted">Geliştirici: @alperkoyun • Sonuç sayısı: 20</p>
 
     <h2>📌 Parametreler</h2>
     <table>
-      <tr>
-        <th>Parametre</th>
-        <th>Açıklama</th>
-        <th>Örnek Değer</th>
-        <th>Zorunlu</th>
-      </tr>
-      <tr>
-        <td>query</td>
-        <td>Aranacak kelime veya cümle</td>
-        <td>openai</td>
-        <td>✔</td>
-      </tr>
-      <tr>
-        <td>dil</td>
-        <td>Arama dili</td>
-        <td>tr</td>
-        <td>✔</td>
-      </tr>
-      <tr>
-        <td>bolge</td>
-        <td>Arama bölgesi (ör. tr, us, de)</td>
-        <td>tr</td>
-        <td>✔</td>
-      </tr>
-      <tr>
-        <td>device</td>
-        <td>Cihaz türü: <code>desktop</code> veya <code>mobile</code></td>
-        <td>desktop</td>
-        <td>❌</td>
-      </tr>
-      <tr>
-        <td>site_filter</td>
-        <td>Belirli bir domain ile filtreleme</td>
-        <td>openai.com</td>
-        <td>❌</td>
-      </tr>
+      <tr><th>Parametre</th><th>Açıklama</th><th>Zorunlu</th></tr>
+      <tr><td>query</td><td>Aranacak kelime/cümle</td><td>✔</td></tr>
+      <tr><td>dil</td><td>Arama dili (örn: tr)</td><td>✔</td></tr>
+      <tr><td>bolge</td><td>Bölge kodu (örn: tr, us)</td><td>✔</td></tr>
+      <tr><td>device</td><td><code>desktop</code> / <code>mobile</code> / <code>tablet</code></td><td>❌</td></tr>
+      <tr><td>site_filter</td><td>Domain filtresi (örn: openai.com)</td><td>❌</td></tr>
     </table>
 
     <h2>⚡ Örnek Sorgu</h2>
-    <pre>
-GET /search?query=openai&dil=tr&bolge=tr&device=desktop&site_filter=openai.com
-    </pre>
+    <pre>GET /search?query=openai&dil=tr&bolge=tr&device=tablet&site_filter=openai.com</pre>
 
-    <h2>✅ Örnek Yanıt</h2>
-    <pre>
-[
-  {
-    "sira": 1,
-    "url": "https://openai.com/",
-    "domain": "openai.com",
-    "baslik": "OpenAI",
-    "aciklama": "OpenAI, yapay zeka araştırmaları yapan bir şirkettir.",
-    "hedef_site_mi": true
-  }
-]
-    </pre>
-
-    <h2>🧪 Canlı API Testi</h2>
+    <h2>🧪 Canlı Test</h2>
     <form onsubmit="return false;">
-      <label>Sorgu (query) *</label>
-      <input id="query" type="text" placeholder="örn: openai" required />
-
-      <label>Dil (dil) *</label>
-      <input id="dil" type="text" placeholder="örn: tr" required />
-
-      <label>Bölge (bolge) *</label>
-      <input id="bolge" type="text" placeholder="örn: tr" required />
-
-      <label>Cihaz (device)</label>
+      <input id="query" placeholder="query (örn: openai)" required />
+      <input id="dil" placeholder="dil (örn: tr)" required />
+      <input id="bolge" placeholder="bolge (örn: tr)" required />
       <select id="device">
-        <option value="">Seçiniz</option>
-        <option value="desktop">Desktop</option>
-        <option value="mobile">Mobile</option>
+        <option value="">device (opsiyonel)</option>
+        <option value="desktop" selected>desktop</option>
+        <option value="mobile">mobile</option>
+        <option value="tablet">tablet</option>
       </select>
-
-      <label>Site Filtresi (site_filter)</label>
-      <input id="site_filter" type="text" placeholder="örn: openai.com" />
-
+      <input id="site_filter" placeholder="site_filter (örn: openai.com) - opsiyonel" />
       <button onclick="testAPI()">API'yi Test Et</button>
     </form>
 
-    <div id="result">Henüz bir sorgu yapılmadı.</div>
+    <div id="result">Henüz sorgu yapılmadı.</div>
   </div>
 
-  <script>
-    async function testAPI() {
-      const query = document.getElementById("query").value;
-      const dil = document.getElementById("dil").value;
-      const bolge = document.getElementById("bolge").value;
-      const device = document.getElementById("device").value;
-      const siteFilter = document.getElementById("site_filter").value;
-      const baseUrl = document.getElementById("base-url").innerText;
+<script>
+async function testAPI(){
+  const baseUrl = document.getElementById("base-url").innerText.trim();
+  const query = document.getElementById("query").value.trim();
+  const dil = document.getElementById("dil").value.trim();
+  const bolge = document.getElementById("bolge").value.trim();
+  const device = document.getElementById("device").value;
+  const siteFilter = document.getElementById("site_filter").value.trim();
 
-      if (!query || !dil || !bolge) {
-        alert("Lütfen zorunlu alanları doldurun!");
-        return;
-      }
+  if(!query || !dil || !bolge){
+    alert("Lütfen query, dil ve bolge alanlarını doldurun!");
+    return;
+  }
 
-      let url = `${baseUrl}/search?query=${encodeURIComponent(query)}&dil=${encodeURIComponent(dil)}&bolge=${encodeURIComponent(bolge)}&device=${encodeURIComponent(device)}&site_filter=${encodeURIComponent(siteFilter)}`;
+  let url = `${baseUrl}/search?query=${encodeURIComponent(query)}&dil=${encodeURIComponent(dil)}&bolge=${encodeURIComponent(bolge)}`;
+  if(device) url += `&device=${encodeURIComponent(device)}`;
+  if(siteFilter) url += `&site_filter=${encodeURIComponent(siteFilter)}`;
 
-      document.getElementById("result").innerText = "⏳ API'den yanıt bekleniyor...";
-
-      try {
-        const response = await fetch(url, {
-          method: "GET",
-          headers: { "Accept": "application/json" }
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP ${response.status} - ${response.statusText}`);
-        }
-
-        const data = await response.json();
-        document.getElementById("result").innerText = JSON.stringify(data, null, 2);
-      } catch (err) {
-        document.getElementById("result").innerHTML = `<span class="error">❌ API isteği başarısız:</span> ${err}`;
-      }
-    }
-  </script>
+  document.getElementById("result").innerText = "⏳ Yükleniyor...";
+  try{
+    const resp = await fetch(url, { headers: { "Accept": "application/json" }});
+    if(!resp.ok) throw new Error(`HTTP ${resp.status}`);
+    const data = await resp.json();
+    document.getElementById("result").innerText = JSON.stringify(data, null, 2);
+  }catch(err){
+    document.getElementById("result").innerText = "❌ Hata: " + err;
+  }
+}
+</script>
 </body>
 </html>
