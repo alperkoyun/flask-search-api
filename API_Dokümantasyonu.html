@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Flask Search API Dokümantasyonu</title>
+  <title>Flask Google Search API Dokümantasyonu</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f4f6f9;
+      background: #f9f9f9;
       color: #222;
       margin: 0;
       padding: 20px;
@@ -77,28 +77,16 @@
       max-height: 400px;
       overflow-y: auto;
     }
-    .optional {
-      color: #888;
-      font-size: 13px;
-    }
-    .info {
-      background: #e8f5ff;
-      border-left: 5px solid #007bff;
-      padding: 10px;
-      margin-top: 10px;
-      border-radius: 5px;
-      font-size: 14px;
-    }
     .error {
-      color: #d9534f;
+      color: red;
       font-weight: bold;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>🔍 Flask Search API</h1>
-    <p>Bu API, Google araması yaparak sonuçları JSON formatında döndürür. Başlık, açıklama, domain ve hedef site kontrolü içerir.</p>
+    <h1>🔍 Flask Google Search API</h1>
+    <p>Bu API, <b>googlesearch-python</b> kütüphanesini kullanarak Google araması yapar ve sonuçları JSON formatında döndürür.</p>
 
     <h2>🌍 API Bilgileri</h2>
     <p><b>Base URL:</b> <code id="base-url">https://flask-search-api-3fox.onrender.com</code></p>
@@ -129,7 +117,7 @@
       </tr>
       <tr>
         <td>bolge</td>
-        <td>Arama bölgesi</td>
+        <td>Arama bölgesi (ör. tr, us, de)</td>
         <td>tr</td>
         <td>✔</td>
       </tr>
@@ -137,34 +125,19 @@
         <td>device</td>
         <td>Cihaz türü: <code>desktop</code> veya <code>mobile</code></td>
         <td>desktop</td>
-        <td>✔</td>
+        <td>❌</td>
       </tr>
       <tr>
         <td>site_filter</td>
         <td>Belirli bir domain ile filtreleme</td>
         <td>openai.com</td>
-        <td>✔</td>
-      </tr>
-      <tr>
-        <td>meta</td>
-        <td>
-          Sayfa başlığı ve açıklamasını çekme: <br>
-          <b>1</b> = Başlık & açıklama alınır <br>
-          <b>0</b> = Hızlı mod (sadece URL/domain döner)
-        </td>
-        <td>1</td>
-        <td class="optional">Opsiyonel</td>
+        <td>❌</td>
       </tr>
     </table>
 
-    <div class="info">
-      ⚡ <b>Yavaş Mod (meta=1)</b> → Başlık ve açıklamalar <b>paralel</b> olarak alınır, 2-4 saniye sürebilir. <br>
-      🚀 <b>Hızlı Mod (meta=0)</b> → Başlık ve açıklamalar çekilmez, sonuçlar anında döner.
-    </div>
-
     <h2>⚡ Örnek Sorgu</h2>
     <pre>
-GET /search?query=openai&dil=tr&bolge=tr&device=desktop&site_filter=openai.com&meta=1
+GET /search?query=openai&dil=tr&bolge=tr&device=desktop&site_filter=openai.com
     </pre>
 
     <h2>✅ Örnek Yanıt</h2>
@@ -192,21 +165,15 @@ GET /search?query=openai&dil=tr&bolge=tr&device=desktop&site_filter=openai.com&m
       <label>Bölge (bolge) *</label>
       <input id="bolge" type="text" placeholder="örn: tr" required />
 
-      <label>Cihaz (device) *</label>
-      <select id="device" required>
+      <label>Cihaz (device)</label>
+      <select id="device">
         <option value="">Seçiniz</option>
         <option value="desktop">Desktop</option>
         <option value="mobile">Mobile</option>
       </select>
 
-      <label>Site Filtresi (site_filter) *</label>
-      <input id="site_filter" type="text" placeholder="örn: openai.com" required />
-
-      <label>Meta *</label>
-      <select id="meta" required>
-        <option value="1" selected>Başlık & Açıklama Al (Yavaş)</option>
-        <option value="0">Hızlı Mod (Başlık & Açıklama Yok)</option>
-      </select>
+      <label>Site Filtresi (site_filter)</label>
+      <input id="site_filter" type="text" placeholder="örn: openai.com" />
 
       <button onclick="testAPI()">API'yi Test Et</button>
     </form>
@@ -221,16 +188,14 @@ GET /search?query=openai&dil=tr&bolge=tr&device=desktop&site_filter=openai.com&m
       const bolge = document.getElementById("bolge").value;
       const device = document.getElementById("device").value;
       const siteFilter = document.getElementById("site_filter").value;
-      const meta = document.getElementById("meta").value;
-
       const baseUrl = document.getElementById("base-url").innerText;
 
-      if (!query || !dil || !bolge || !device || !siteFilter) {
-        alert("Lütfen tüm zorunlu alanları doldurun!");
+      if (!query || !dil || !bolge) {
+        alert("Lütfen zorunlu alanları doldurun!");
         return;
       }
 
-      let url = `${baseUrl}/search?query=${encodeURIComponent(query)}&dil=${encodeURIComponent(dil)}&bolge=${encodeURIComponent(bolge)}&device=${encodeURIComponent(device)}&site_filter=${encodeURIComponent(siteFilter)}&meta=${encodeURIComponent(meta)}`;
+      let url = `${baseUrl}/search?query=${encodeURIComponent(query)}&dil=${encodeURIComponent(dil)}&bolge=${encodeURIComponent(bolge)}&device=${encodeURIComponent(device)}&site_filter=${encodeURIComponent(siteFilter)}`;
 
       document.getElementById("result").innerText = "⏳ API'den yanıt bekleniyor...";
 
