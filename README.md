@@ -33,19 +33,20 @@ python3 -m venv venv
 source venv/bin/activate   # Windows: venv\Scripts\activate
 ```
 3️⃣ Bağımlılıkları Kur
-
+```bash
 pip install -r requirements.txt
-
+```
 4️⃣ Lokal Sunucuyu Başlat
-
+```bash
 python app.py
 
 Sunucu çalıştığında:
 
 http://127.0.0.1:5000
-
+```
 
 ⚡ Örnek Sorgular
+```bash
 1️⃣ Hızlı Mod (meta=0) — Varsayılan
 curl "http://127.0.0.1:5000/search?query=openai&dil=tr&bolge=tr&device=desktop&site_filter=openai.com&meta=0"
 
@@ -71,3 +72,4 @@ curl "http://127.0.0.1:5000/search?query=openai&dil=tr&bolge=tr&device=desktop&s
     "hedef_site_mi": true
   }
 ]
+```
