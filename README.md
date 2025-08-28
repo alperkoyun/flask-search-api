@@ -13,14 +13,11 @@ Verilen parametreler ile Google üzerinde arama yapar ve ilk **10 sonucu JSON fo
 **Base URL:**  
 https://flask-search-api-3fox.onrender.com
 
-makefile
-Kodu kopyala
+
 
 **Endpoint:**  
 /search
 
-markdown
-Kodu kopyala
 
 **Yöntem:** `GET`  
 **Yanıt Tipi:** `application/json`  
@@ -56,8 +53,6 @@ Kodu kopyala
 **Örnek URL:**  
 https://flask-search-api-3fox.onrender.com/search?query=openai&dil=tr&bolge=tr&device=desktop&site_filter=openai.com
 
-pgsql
-Kodu kopyala
 
 ---
 
@@ -96,8 +91,7 @@ Sadece sonuçlar arasında olup olmadığını kontrol etmeniz gerekir.
 
 🧩 API Entegrasyon Örnekleri
 JavaScript ile
-javascript
-Kodu kopyala
+
 const params = {
   query: "openai",
   dil: "tr",
