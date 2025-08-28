@@ -43,7 +43,7 @@ Kodu kopyala
 ## 🎯 API’nin Özellikleri
 
 - 🔎 Google üzerinde belirtilen anahtar kelime için arama yapar  
-- 📌 İlk **10 sonucu** JSON formatında döndürür  
+- 📌 İlk **40 sonucu** JSON formatında döndürür  
 - 🏷️ Her sonucun **sıra numarası**, **URL**, **domain**, **başlık** ve **meta açıklamasını** verir  
 - ✅ Belirtilen `site_filter` URL’si sonucu içeriyorsa `hedef_site_mi: true` döner  
 - ❌ **Hedef site sırasını veya özet rapor vermez**  
