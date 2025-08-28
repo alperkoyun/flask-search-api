@@ -81,6 +81,18 @@
       color: #888;
       font-size: 13px;
     }
+    .info {
+      background: #e8f5ff;
+      border-left: 5px solid #007bff;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+    .error {
+      color: #d9534f;
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -89,7 +101,7 @@
     <p>Bu API, Google araması yaparak sonuçları JSON formatında döndürür. Başlık, açıklama, domain ve hedef site kontrolü içerir.</p>
 
     <h2>🌍 API Bilgileri</h2>
-    <p><b>Base URL:</b> <code>https://flask-search-api-3fox.onrender.com</code></p>
+    <p><b>Base URL:</b> <code id="base-url">https://flask-search-api-3fox.onrender.com</code></p>
     <p><b>Endpoint:</b> <code>/search</code></p>
     <p><b>Yöntem:</b> GET</p>
     <p><b>Yanıt Tipi:</b> JSON</p>
@@ -144,6 +156,11 @@
         <td class="optional">Opsiyonel</td>
       </tr>
     </table>
+
+    <div class="info">
+      ⚡ <b>Yavaş Mod (meta=1)</b> → Başlık ve açıklamalar <b>paralel</b> olarak alınır, 2-4 saniye sürebilir. <br>
+      🚀 <b>Hızlı Mod (meta=0)</b> → Başlık ve açıklamalar çekilmez, sonuçlar anında döner.
+    </div>
 
     <h2>⚡ Örnek Sorgu</h2>
     <pre>
@@ -206,19 +223,31 @@ GET /search?query=openai&dil=tr&bolge=tr&device=desktop&site_filter=openai.com&m
       const siteFilter = document.getElementById("site_filter").value;
       const meta = document.getElementById("meta").value;
 
+      const baseUrl = document.getElementById("base-url").innerText;
+
       if (!query || !dil || !bolge || !device || !siteFilter) {
         alert("Lütfen tüm zorunlu alanları doldurun!");
         return;
       }
 
-      let url = `https://flask-search-api-3fox.onrender.com/search?query=${encodeURIComponent(query)}&dil=${encodeURIComponent(dil)}&bolge=${encodeURIComponent(bolge)}&device=${encodeURIComponent(device)}&site_filter=${encodeURIComponent(siteFilter)}&meta=${encodeURIComponent(meta)}`;
+      let url = `${baseUrl}/search?query=${encodeURIComponent(query)}&dil=${encodeURIComponent(dil)}&bolge=${encodeURIComponent(bolge)}&device=${encodeURIComponent(device)}&site_filter=${encodeURIComponent(siteFilter)}&meta=${encodeURIComponent(meta)}`;
+
+      document.getElementById("result").innerText = "⏳ API'den yanıt bekleniyor...";
 
       try {
-        const response = await fetch(url);
+        const response = await fetch(url, {
+          method: "GET",
+          headers: { "Accept": "application/json" }
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status} - ${response.statusText}`);
+        }
+
         const data = await response.json();
         document.getElementById("result").innerText = JSON.stringify(data, null, 2);
       } catch (err) {
-        document.getElementById("result").innerText = "❌ API isteği başarısız: " + err;
+        document.getElementById("result").innerHTML = `<span class="error">❌ API isteği başarısız:</span> ${err}`;
       }
     }
   </script>

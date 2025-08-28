@@ -9,7 +9,7 @@ from urllib.parse import urlparse
 from concurrent.futures import ThreadPoolExecutor, as_completed  
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
 # UA'lar
 USER_AGENT_MOBILE = (
