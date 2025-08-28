@@ -71,3 +71,9 @@ curl "http://127.0.0.1:5000/search?query=openai&dil=tr&bolge=tr&device=desktop&s
   }
 ]
 ```
+
+
+⚡ Örnek Online Sorgu
+```bash
+https://flask-search-api-3fox.onrender.com/search?query=openai&dil=tr&bolge=tr&device=desktop&site_filter=openai.com
+```
