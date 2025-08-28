@@ -32,10 +32,12 @@ cd flask-google-search-api
 python3 -m venv venv
 source venv/bin/activate   # Windows: venv\Scripts\activate
 ```
+
 3️⃣ Bağımlılıkları Kur
 ```bash
 pip install -r requirements.txt
 ```
+
 4️⃣ Lokal Sunucuyu Başlat
 ```bash
 python app.py
