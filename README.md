@@ -159,7 +159,7 @@ curl "https://flask-search-api-3fox.onrender.com/search?query=openai&dil=tr&bolg
 
 🛠 Lokal Kurulum
 
-git clone https://github.com/kullanici/flask-search-api.git
+git clone https://github.com/alperkoyun/flask-search-api.git
 cd flask-search-api
 pip install -r requirements.txt
 python app.py
