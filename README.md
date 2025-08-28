@@ -43,7 +43,7 @@ Kodu kopyala
 ## 🎯 API’nin Özellikleri
 
 - 🔎 Google üzerinde belirtilen anahtar kelime için arama yapar  
-- 📌 İlk **10 sonucu** JSON formatında döndürür  
+- 📌 İlk **40 sonucu** JSON formatında döndürür  
 - 🏷️ Her sonucun **sıra numarası**, **URL**, **domain**, **başlık** ve **meta açıklamasını** verir  
 - ✅ Belirtilen `site_filter` URL’si sonucu içeriyorsa `hedef_site_mi: true` döner  
 - ❌ **Hedef site sırasını veya özet rapor vermez**  
@@ -90,6 +90,7 @@ Kodu kopyala
     "hedef_site_mi": false
   }
 ]
+```
 Not: Bu API, hedef sitenin kaçıncı sırada olduğunu hesaplamaz.
 Sadece sonuçlar arasında olup olmadığını kontrol etmeniz gerekir.
 
@@ -117,9 +118,9 @@ fetch(url)
     });
   })
   .catch(err => console.error("Hata:", err));
+
 Python ile
-python
-Kodu kopyala
+
 import requests
 
 url = "https://flask-search-api-3fox.onrender.com/search"
@@ -138,12 +139,15 @@ if response.status_code == 200:
         print(f"{r['sira']}. {r['baslik']} -> {r['url']} | Hedef site mi? {r['hedef_site_mi']}")
 else:
     print("Hata:", response.status_code, response.text)
+
+
 cURL ile
-bash
-Kodu kopyala
+
 curl "https://flask-search-api-3fox.onrender.com/search?query=openai&dil=tr&bolge=tr&device=desktop&site_filter=openai.com"
+
+
 📊 Kullanım Senaryoları
-🔹 Google Arama Sonuçları Çekme → İlk 10 sonucu JSON formatında al
+🔹 Google Arama Sonuçları Çekme → İlk 40 sonucu JSON formatında al
 
 🔹 Site Varlık Kontrolü → Belirli bir domain sonuçlar arasında var mı?
 
@@ -154,19 +158,12 @@ curl "https://flask-search-api-3fox.onrender.com/search?query=openai&dil=tr&bolg
 🔹 Otomasyon Sistemleri → Kendi SEO paneline entegre etme
 
 🛠 Lokal Kurulum
-bash
-Kodu kopyala
+
 git clone https://github.com/kullanici/flask-search-api.git
 cd flask-search-api
 pip install -r requirements.txt
 python app.py
+
 API şu adreste çalışır:
 
-arduino
-Kodu kopyala
-http://127.0.0.1:5000/search
-Örnek:
-
-bash
-Kodu kopyala
 http://127.0.0.1:5000/search?query=openai&dil=tr&bolge=tr&device=desktop&site_filter=openai.com
