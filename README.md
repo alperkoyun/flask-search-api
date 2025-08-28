@@ -147,7 +147,7 @@ curl "https://flask-search-api-3fox.onrender.com/search?query=openai&dil=tr&bolg
 
 
 📊 Kullanım Senaryoları
-🔹 Google Arama Sonuçları Çekme → İlk 10 sonucu JSON formatında al
+🔹 Google Arama Sonuçları Çekme → İlk 40 sonucu JSON formatında al
 
 🔹 Site Varlık Kontrolü → Belirli bir domain sonuçlar arasında var mı?
 
