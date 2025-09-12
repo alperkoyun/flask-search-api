@@ -14,9 +14,9 @@ def searxng_search_to_json(query, dil="tr", site_filter=None, num_results=20):
     params = {
         "q": query,
         "format": "json",
+        "categories": "general",
         "language": dil,
-        "safesearch": 0,
-        "category_general": 1
+        "safesearch": 0
     }
 
     r = requests.get(f"{SEARXNG_URL}/search", params=params, timeout=10)
