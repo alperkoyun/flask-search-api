@@ -1,64 +1,58 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from googlesearch import search
 from urllib.parse import urlparse
+import requests
+import os
 
 app = Flask(__name__)
-CORS(app)  # CORS açık
+CORS(app)
 
-# User-Agent'ler
-USER_AGENT_DESKTOP = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
-USER_AGENT_MOBILE = "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/537.36 (KHTML, like Gecko) Mobile/15E148"
-USER_AGENT_TABLET = "Mozilla/5.0 (iPad; CPU OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0 Mobile/15E148 Safari/604.1"
+# Public SearXNG instance
+SEARXNG_URL = os.environ.get("SEARXNG_URL", "https://searx.tiekoetter.com")
 
-# Google araması yapan fonksiyon
-def google_search_to_json(query, dil="tr", bolge="tr", device="desktop", site_filter=None, num_results=20):
-    results = []
-
-    # User-Agent seçimi
-    if device == "mobile":
-        user_agent = USER_AGENT_MOBILE
-    elif device == "tablet":
-        user_agent = USER_AGENT_TABLET
-    else:
-        user_agent = USER_AGENT_DESKTOP
-
-    search_params = {
-        "num_results": num_results,
-        "lang": dil,
-        "region": bolge,
-        "unique": True
+def searxng_search_to_json(query, dil="tr", site_filter=None, num_results=20):
+    params = {
+        "q": query,
+        "format": "json",
+        "language": dil,
+        "safesearch": 0,
+        "category_general": 1
     }
 
-    urls = list(search(query, **search_params))
+    r = requests.get(f"{SEARXNG_URL}/search", params=params, timeout=10)
+    r.raise_for_status()
+    data = r.json()
 
-    for i, url in enumerate(urls, start=1):
+    results = []
+    for i, item in enumerate(data.get("results", [])[:num_results], start=1):
+        url = item.get("url")
+        domain = urlparse(url).netloc if url else ""
+
         results.append({
             "sira": i,
             "url": url,
-            "domain": urlparse(url).netloc,
-            "hedef_site_mi": (site_filter in url) if site_filter else False
+            "domain": domain,
+            "baslik": item.get("title"),
+            "aciklama": item.get("content"),
+            "hedef_site_mi": (site_filter in url) if (site_filter and url) else False
         })
 
     return results
 
-@app.route('/search', methods=['GET'])
+
+@app.route("/search", methods=["GET"])
 def search_api():
-    query = request.args.get('query')
-    dil = request.args.get('dil', default="tr")
-    bolge = request.args.get('bolge', default="tr")
-    device = request.args.get('device', default="desktop")
-    site_filter = request.args.get('site_filter')
+    query = request.args.get("query")
+    dil = request.args.get("dil", default="tr")
+    site_filter = request.args.get("site_filter")
 
     if not query:
         return jsonify({"error": "query parametresi zorunludur"}), 400
 
     try:
-        results = google_search_to_json(
+        results = searxng_search_to_json(
             query=query,
             dil=dil,
-            bolge=bolge,
-            device=device,
             site_filter=site_filter,
             num_results=20
         )
@@ -70,5 +64,7 @@ def search_api():
 
     return jsonify(results)
 
+
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
